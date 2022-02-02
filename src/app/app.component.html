@@ -1,9 +1,24 @@
 <mat-toolbar color="primary">
   <mat-icon>local_fire_department</mat-icon>
   <span>Kanban Fire</span>
+
+  <span class="menu-spacer"></span>
+
+  <span *ngIf="(user | async) as loggedInUser; else notLoggedInMenu">
+    <span>{{loggedInUser?.email}}</span>
+    <button (click)="logout()" mat-icon-button aria-label="Logout">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </span>
+
+  <ng-template #notLoggedInMenu>
+    <button (click)="login()" mat-icon-button aria-label="Login">
+      <mat-icon>login</mat-icon>
+    </button>
+  </ng-template>
 </mat-toolbar>
 
-<div class="content-wrapper">
+<div *ngIf="(user | async); else notLoggedIn" class="content-wrapper">
   <button (click)="newTask()" mat-button>
     <mat-icon>add</mat-icon> Add Task
   </button>
@@ -41,3 +56,7 @@
     </div>
   </div>
 </div>
+
+<ng-template #notLoggedIn>
+  <mat-card>Login to view the todos by clicking on the icon at the top</mat-card>
+</ng-template>

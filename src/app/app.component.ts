@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { Task } from './task/task';
+import { Task } from './components/task/task';
 import { CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
-import { MatDialog } from '@angular/material/dialog';
-import { TaskDialogComponent, TaskDialogResult } from './task-dialog/task-dialog.component';
+import { TaskDialogComponent } from './components/task-dialog/task-dialog.component';
+import { TaskDialogResult } from './components/task-dialog/task-dialog';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AuthService } from './services/auth/auth.service';
+import { MatDialog } from '@angular/material/dialog';
 
 const getObservable = (collection: AngularFirestoreCollection<Task>) => {
   const subject = new BehaviorSubject<Task[]>([]);
@@ -23,8 +25,9 @@ export class AppComponent {
   todo = getObservable(this.store.collection('todo')) as Observable<Task[]>;
   inProgress = getObservable(this.store.collection('inProgress')) as Observable<Task[]>;
   done = getObservable(this.store.collection('done')) as Observable<Task[]>;
+  user: Observable<any> = this.auth.user;
 
-  constructor(private dialog: MatDialog, private store: AngularFirestore) {}
+  constructor(private dialog: MatDialog, private store: AngularFirestore, private auth: AuthService) { }
 
   editTask(list: 'done' | 'todo' | 'inProgress', task: Task): void {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
@@ -68,7 +71,7 @@ export class AppComponent {
 
   newTask(): void {
     const dialogRef = this.dialog.open(TaskDialogComponent, {
-      width: '270px',
+      width: '370px',
       data: {
         task: {},
       },
@@ -76,12 +79,19 @@ export class AppComponent {
     dialogRef
       .afterClosed()
       .subscribe((result: TaskDialogResult|undefined) => {
-        console.log(result);
         if (!result) {
           return;
         }
         this.store.collection('todo').add(result.task)
       });
+  }
+
+  login() {
+    this.auth.login();
+  }
+
+  logout() {
+    this.auth.logout();
   }
 
 }
