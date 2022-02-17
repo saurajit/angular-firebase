@@ -1,0 +1,18 @@
+<form (ngSubmit)="login()" autocomplete="off">
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input type="email" name="email" matInput cdkFocusInitial [(ngModel)]="data.email" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Password</mat-label>
+    <input type="password" name="password" matInput [(ngModel)]="data.password" />
+  </mat-form-field>
+  <mat-progress-bar *ngIf="isFetchingData" mode="query">
+  </mat-progress-bar>
+  <div *ngIf="errorMessage">{{errorMessage}}</div>
+  <div mat-dialog-actions>
+    <button type="submit" mat-button>OK</button>
+    <button mat-button (click)="cancel()">Cancel</button>
+  </div>
+</form>
